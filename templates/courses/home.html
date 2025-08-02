@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Online Learning Platform{% endblock %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">Learn Without Limits</h1>
+                <p class="lead">Discover thousands of courses, build valuable skills, and advance your career with our comprehensive online learning platform.</p>
+                <a href="{% url 'course_list' %}" class="btn btn-light btn-lg">Browse Courses</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://via.placeholder.com/500x300/ffffff/0d6efd?text=Online+Learning" class="img-fluid rounded" alt="Online Learning">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <h2 class="text-center mb-5">Featured Courses</h2>
+    <div class="row">
+        {% for course in featured_courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200/f8f9fa/6c757d?text={{ course.title|truncatechars:10 }}" class="card-img-top" alt="{{ course.title }}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatechars:100 }}</p>
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-user"></i> {{ course.instructor.get_full_name|default:course.instructor.username }}
+                            </small>
+                            <span class="badge bg-primary">{{ course.get_difficulty_display }}</span>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{% url 'course_detail' course.pk %}" class="btn btn-primary btn-sm">View Course</a>
+                            {% if course.price > 0 %}
+                            <span class="text-success fw-bold">${{ course.price }}</span>
+                            {% else %}
+                            <span class="text-success fw-bold">Free</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="lead">No courses available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Our Platform?</h2>
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <i class="fas fa-play-circle fa-3x text-primary mb-3"></i>
+                <h4>Expert Instructors</h4>
+                <p>Learn from industry professionals and experienced educators.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                <h4>Flexible Learning</h4>
+                <p>Study at your own pace, anytime and anywhere.</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                <h4>Progress Tracking</h4>
+                <p>Monitor your learning progress and achievements.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
