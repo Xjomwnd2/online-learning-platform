@@ -63,3 +63,89 @@ html, body {
     flex-direction: column;
     min-height: 100vh;
 }
+
+/* Additional styles for better UX */
+.dashboard-card {
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.stat-item {
+    padding: 10px;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.badge.bg-beginner {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-intermediate {
+    background-color: var(--warning-color) !important;
+}
+
+.badge.bg-advanced {
+    background-color: var(--danger-color) !important;
+}
+
+.lesson-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 20px;
+    z-index: 1020;
+}
+
+/* Form styling */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Button animations */
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .course-stats {
+        margin-bottom: 20px;
+    }
+    
+    .sticky-top {
+        position: relative;
+        top: auto;
+    }
+}
