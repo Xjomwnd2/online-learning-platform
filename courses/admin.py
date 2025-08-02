@@ -2,6 +2,12 @@
 from django.contrib import admin
 from .models import Category, Course, Lesson, Enrollment
 
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug') # Optional: add slug to list_display
+    prepopulated_fields = {'slug': ('title',)}
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'description']
