@@ -110,3 +110,56 @@ def lesson_detail(request, course_id, lesson_id):
         'lesson': lesson,
         'lesson_progress': lesson_progress
     })
+
+@login_required
+def lesson_detail(request, course_id, lesson_id):
+    course = get_object_or_404(Course, id=course_id)
+    lesson = get_object_or_404(Lesson, id=lesson_id, course=course)
+    
+    # Check if user is enrolled
+    if not Enrollment.objects.filter(student=request.user, course=course).exists():
+        messages.error(request, 'You must be enrolled in this course to access lessons.')
+        return redirect('course_detail', pk=course_id)
+    
+    # Get or create lesson progress
+    lesson_progress, created = LessonProgress.objects.get_or_create(
+        student=request.user,
+        lesson=lesson
+    )
+    
+    # Handle marking lesson as complete
+    if request.method == 'POST' and 'mark_complete' in request.POST:
+        if not lesson_progress.completed:
+            lesson_progress.completed = True
+            lesson_progress.completed_at = timezone.now()
+            lesson_progress.save()
+            
+            # Update course progress
+            from progress.views import update_course_progress
+            update_course_progress(request.user, course)
+            
+            messages.success(request, f'Lesson "{lesson.title}" marked as completed!')
+        
+        return redirect('lesson_detail', course_id=course_id, lesson_id=lesson_id)
+    
+    # Get course progress for sidebar
+    try:
+        course_progress = CourseProgress.objects.get(student=request.user, course=course)
+    except CourseProgress.DoesNotExist:
+        course_progress = None
+    
+    # Get all lesson progress for this course
+    lesson_progress_data = LessonProgress.objects.filter(
+        student=request.user,
+        lesson__course=course
+    ).values_list('lesson_id', 'completed')
+    
+    completed_lessons = dict(lesson_progress_data)
+    
+    return render(request, 'courses/lesson_detail.html', {
+        'course': course,
+        'lesson': lesson,
+        'lesson_progress': lesson_progress,
+        'course_progress': course_progress,
+        'completed_lessons': completed_lessons
+    })
