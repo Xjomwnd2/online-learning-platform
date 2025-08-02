@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Online Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+            <p class="text-muted">Continue your learning journey</p>
+        </div>
+        <a href="{% url 'course_list' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Browse More Courses
+        </a>
+    </div>
+
+    {% if progress_data %}
+    <div class="row">
+        {% for data in progress_data %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card dashboard-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">{{ data.enrollment.course.title }}</h5>
+                        <span class="badge bg-{{ data.enrollment.course.get_difficulty_display|lower }}">
+                            {{ data.enrollment.course.get_difficulty_display }}
+                        </span>
+                    </div>
+                    
+                    <p class="card-text text-muted">{{ data.enrollment.course.description|truncatechars:80 }}</p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">Progress</small>
+                            <small class="text-muted">{{ data.progress.progress_percentage|floatformat:0 }}%</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ data.progress.progress_percentage }}%" 
+                                 aria-valuenow="{{ data.progress.progress_percentage }}" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Instructor</small>
+                            <div class="fw-bold">{{ data.enrollment.course.instructor.get_full_name|default:data.enrollment.course.instructor.username }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Enrolled</small>
+                            <div class="fw-bold">{{ data.enrollment.enrolled_at|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        {% if data.enrollment.completed %}
+                        <div class="alert alert-success py-2 mb-2">
+                            <i class="fas fa-trophy"></i> Course Completed!
+                            {% if data.enrollment.completion_date %}
+                            <br><small>Completed on {{ data.enrollment.completion_date|date:"M d, Y" }}</small>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'course_detail' data.enrollment.course.id %}" class="btn btn-outline-primary">
+                                {% if data.progress.progress_percentage > 0 %}
+                                Continue Learning
+                                {% else %}
+                                Start Course
+                                {% endif %}
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> Last accessed: {{ data.progress.last_accessed|timesince }} ago
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Learning Statistics -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">Your Learning Stats</h3>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-book-open fa-2x text-primary mb-2"></i>
+                    <h4 class="card-title">{{ progress_data|length }}</h4>
+                    <p class="card-text text-muted">Enrolled Courses</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-trophy fa-2x text-success mb-2"></i>
+                    <h4 class="card-title">
+                        {% with completed=progress_data|length %}
+                        {% for data in progress_data %}
+                        {% if data.enrollment.completed %}{{ forloop.counter }}{% endif %}
+                        {% endfor %}
+                        {% endwith %}
+                    </h4>
+                    <p class="card-text text-muted">Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                    <h4 class="card-title">
+                        {% with total_progress=0 %}
+                        {% for data in progress_data %}
+                        {% with total_progress=total_progress|add:data.progress.progress_percentage %}
+                        {% endwith %}
+                        {% endfor %}
+                        {% if progress_data %}
+                        {{ total_progress|div:progress_data|length|floatformat:0 }}%
+                        {% else %}
+                        0%
+                        {% endif %}
+                        {% endwith %}
+                    </h4>
+                    <p class="card-text text-muted">Avg Progress</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-fire fa-2x text-warning mb-2"></i>
+                    <h4 class="card-title">7</h4>
+                    <p class="card-text text-muted">Day Streak</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <i class="fas fa-graduation-cap fa-4x text-muted mb-4"></i>
+        <h3 class="text-muted">Start Your Learning Journey</h3>
+        <p class="text-muted mb-4">You haven't enrolled in any courses yet. Browse our catalog to find courses that interest you.</p>
+        <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-search"></i> Browse Courses
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
