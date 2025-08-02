@@ -2,7 +2,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db import models
 
+
+class Course(models.Model):
+    # ... other fields like title, description, etc.
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.title
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
