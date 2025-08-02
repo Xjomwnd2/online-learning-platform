@@ -12,7 +12,6 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'instructor', 'category', 'difficulty', 'price', 'is_active']
     list_filter = ['category', 'difficulty', 'is_active', 'created_at']
     search_fields = ['title', 'description']
-    prepopulated_fields = {'slug': ('title',)}
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
