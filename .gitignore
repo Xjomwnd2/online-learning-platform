@@ -32,3 +32,27 @@ google-services.json
 
 # Android Profiling
 *.hprof
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Virtual Environment
+learning_platform_env/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static files (if using collectstatic)
+staticfiles/
