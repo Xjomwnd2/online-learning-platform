@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lesson.title }} - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'course_detail' course.id %}">{{ course.title }}</a></li>
+                    <li class="breadcrumb-item active">{{ lesson.title }}</li>
+                </ol>
+            </nav>
+
+            <!-- Lesson Content -->
+            <div class="lesson-content">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1>{{ lesson.title }}</h1>
+                        <p class="text-muted">
+                            <i class="fas fa-clock"></i> {{ lesson.duration_minutes }} minutes
+                            <span class="mx-2">•</span>
+                            <i class="fas fa-book"></i> Lesson {{ lesson.order }}
+                        </p>
+                    </div>
+                    <div>
+                        {% if lesson_progress.completed %}
+                        <span class="badge bg-success fs-6">
+                            <i class="fas fa-check"></i> Completed
+                        </span>
+                        {% else %}
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="mark_complete" class="btn btn-outline-success">
+                                <i class="fas fa-check"></i> Mark Complete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Video Player (if video URL exists) -->
+                {% if lesson.video_url %}
+                <div class="video-container mb-4">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="{{ lesson.video_url }}" allowfullscreen></iframe>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Lesson Text Content -->
+                <div class="lesson-text-content">
+                    <div class="card">
+                        <div class="card-body">
+                            {{ lesson.content|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="lesson-navigation mt-4">
+                    <div class="d-flex justify-content-between">
+                        {% with prev_lesson=lesson.get_previous_by_order %}
+                        {% if prev_lesson and prev_lesson.course == course %}
+                        <a href="{% url 'lesson_detail' course.id prev_lesson.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left"></i> Previous Lesson
+                        </a>
+                        {% else %}
+                        <div></div>
+                        {% endif %}
+                        {% endwith %}
+
+                        {% with next_lesson=lesson.get_next_by_order %}
+                        {% if next_lesson and next_lesson.course == course %}
+                        <a href="{% url 'lesson_detail' course.id next_lesson.id %}" class="btn btn-primary">
+                            Next Lesson <i class="fas fa-arrow-right"></i>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-success">
+                            <i class="fas fa-trophy"></i> Course Complete
+                        </a>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header">
+                    <h5 class="mb-0">Course Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">
+                            45%
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">3 of 8 lessons completed</p>
+                    
+                    <h6>Course Lessons</h6>
+                    <div class="lesson-list">
+                        {% for course_lesson in course.lessons.all %}
+                        <div class="lesson-item d-flex align-items-center py-2 {% if course_lesson == lesson %}bg-light rounded{% endif %}">
+                            <div class="lesson-status me-2">
+                                {% if course_lesson == lesson %}
+                                <i class="fas fa-play-circle text-primary"></i>
+                                {% else %}
+                                <i class="far fa-circle text-muted"></i>
+                                {% endif %}
+                            </div>
+                            <div class="lesson-info flex-grow-1">
+                                {% if course_lesson == lesson %}
+                                <div class="fw-bold">{{ course_lesson.title }}</div>
+                                {% else %}
+                                <a href="{% url 'lesson_detail' course.id course_lesson.id %}" class="text-decoration-none">
+                                    {{ course_lesson.title }}
+                                </a>
+                                {% endif %}
+                                <small class="text-muted">{{ course_lesson.duration_minutes }} min</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-arrow-left"></i> Back to Course
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
