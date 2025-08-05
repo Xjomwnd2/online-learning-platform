@@ -37,10 +37,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'online-learning-platform',  # Your learning platform app
+    'paypal.standard.ipn',  # PayPal integration
     'courses',
     'accounts',
     'progress',
 ]
+
+# ... rest of your existing settings ...
+
+# PayPal Configuration (add at the end)
+PAYPAL_TEST = True
+PAYPAL_RECEIVER_EMAIL = "your-business-email@example.com"
+
+if PAYPAL_TEST:
+    PAYPAL_POSTBACK_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
+    PAYPAL_SUBSCRIPTION_SANDBOX_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
+else:
+    PAYPAL_POSTBACK_URL = "https://www.paypal.com/cgi-bin/webscr"
+    PAYPAL_SUBSCRIPTION_SANDBOX_URL = "https://www.paypal.com/cgi-bin/webscr"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
