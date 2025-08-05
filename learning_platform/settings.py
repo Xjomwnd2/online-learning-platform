@@ -37,11 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'online-learning-platform',  # Your learning platform app
+    'accounts',      # Your user/authentication app
+    'courses',       # Your courses app
+    'progress',      # Your progress tracking app
     'paypal.standard.ipn',  # PayPal integration
-    'courses',
-    'accounts',
-    'progress',
 ]
 
 # ... rest of your existing settings ...
