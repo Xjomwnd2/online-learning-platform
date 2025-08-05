@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
 # PayPal Configuration (add at the end)
 PAYPAL_TEST = True
-PAYPAL_RECEIVER_EMAIL = "your-business-email@example.com"
+PAYPAL_RECEIVER_EMAIL = "joelmwaura19@gmail.com"
 
 if PAYPAL_TEST:
     PAYPAL_POSTBACK_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
