@@ -1,19 +1,7 @@
-# Create your models here.
+# courses/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-# courses/models.py
-from django.db import models
-
-class Course(models.Model):
-    title = models.CharField(max_length=200)
-    # Add the slug field here
-    slug = models.SlugField(max_length=200, unique=True)
-    description = models.TextField()
-    # ... other fields
-
-    def __str__(self):
-        return self.title
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -33,6 +21,7 @@ class Course(models.Model):
     ]
     
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField()
     instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_courses')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -66,7 +55,7 @@ class Lesson(models.Model):
 
 class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments') 
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     enrolled_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     completion_date = models.DateTimeField(blank=True, null=True)
