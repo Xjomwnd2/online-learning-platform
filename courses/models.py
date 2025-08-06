@@ -21,7 +21,7 @@ class Course(models.Model):
     ]
     
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, null=True, blank=True)  # Temporarily nullable
     description = models.TextField()
     instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_courses')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
